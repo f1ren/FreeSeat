@@ -1,22 +1,27 @@
 package navat.bgu.freeseat;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 
 public class MainActivity extends ListActivity {
 	private EditText filterText = null;
 	ArrayAdapter<String> adapter = null;
+	RoomsProvider rp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        rp = new RoomsProvider(this.getBaseContext());
+        
+        if (rp.isExpired()) {
+        	rp.feedDatabase();
+        }
         
         filterText = (EditText) findViewById(R.id.search_box);
         filterText.addTextChangedListener(filterTextWatcher);
@@ -25,7 +30,6 @@ public class MainActivity extends ListActivity {
                 android.R.layout.simple_list_item_1, 
                 getStringArrayList());
         setListAdapter(adapter);
-        ;
     }
 
     private String[] getStringArrayList() {
