@@ -5,9 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -26,7 +24,7 @@ public class RoomsProvider {
 	Context context;
 	MainActivity activity;
 	public static final String lastUpdatePrefKey = "LastDBUpdate";
-	SharedPreferences settings = activity.getSharedPreferences("LastDBUpdate", 0);
+	SharedPreferences settings;
 	
 	public RoomsProvider(MainActivity fromActivity, SharedPreferences ownerSettings) {
 		context = fromActivity;
@@ -37,9 +35,8 @@ public class RoomsProvider {
 	}
 	public void loadFromDb() {
 		roomList = db.getAllRooms();
-		Calendar c = Calendar.getInstance();
 		SharedPreferences.Editor editor = settings.edit();
-	    editor.putLong(lastUpdatePrefKey, c.SECOND);
+	    editor.putLong(lastUpdatePrefKey, System.currentTimeMillis());
 	
 	    // Commit the edits!
 	    editor.commit();
@@ -48,7 +45,7 @@ public class RoomsProvider {
 		if (db.isRoomsTableEmpty()) {
 			return true;
 		}
-		if (Math.abs(settings.getLong("lastUpdate", System.currentTimeMillis()) - Calendar.SECOND) > 60 * 2) {
+		if (Math.abs(settings.getLong(lastUpdatePrefKey, System.currentTimeMillis()) - System.currentTimeMillis()) > 60 * 2) {
 			return true;
 		}
 		return false;
