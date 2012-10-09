@@ -5,15 +5,19 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class RoomsProvider {
@@ -21,18 +25,30 @@ public class RoomsProvider {
 	DatabaseHelper db;
 	Context context;
 	MainActivity activity;
+	public static final String lastUpdatePrefKey = "LastDBUpdate";
+	SharedPreferences settings = activity.getSharedPreferences("LastDBUpdate", 0);
 	
-	public RoomsProvider(MainActivity fromActivity) {
+	public RoomsProvider(MainActivity fromActivity, SharedPreferences ownerSettings) {
 		context = fromActivity;
 		activity = fromActivity;
+		settings = ownerSettings;
 		db = new DatabaseHelper(context);
 		loadFromDb();
 	}
 	public void loadFromDb() {
 		roomList = db.getAllRooms();
+		Calendar c = Calendar.getInstance();
+		SharedPreferences.Editor editor = settings.edit();
+	    editor.putLong(lastUpdatePrefKey, c.SECOND);
+	
+	    // Commit the edits!
+	    editor.commit();
 	}
 	public boolean isExpired() {
 		if (db.isRoomsTableEmpty()) {
+			return true;
+		}
+		if (Math.abs(settings.getLong("lastUpdate", System.currentTimeMillis()) - Calendar.SECOND) > 60 * 2) {
 			return true;
 		}
 		return false;
@@ -66,8 +82,6 @@ public class RoomsProvider {
             	activity.adapter = new ArrayAdapter<Room>(activity,
                         android.R.layout.simple_list_item_1, 
                         roomList);
-            	activity.setListAdapter(activity.adapter);
-            	activity.adapter.notifyDataSetChanged();
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -79,12 +93,16 @@ public class RoomsProvider {
         protected void onPreExecute(){ 
            super.onPreExecute();
                 pdia = new ProgressDialog(context);
-                pdia.setMessage("Retriving data from server");
+                pdia.setMessage("Loading...");
                 pdia.show();
                 db.onUpgrade(db.getWritableDatabase(), 1, 1);
         }
 
-        protected void onPostExecute(RoomsHTMLParser parser) {
+        protected void onPostExecute(Boolean result) {
+        	activity.setListAdapter(activity.adapter);
+        	activity.adapter.notifyDataSetChanged();
+        	EditText filterText = (EditText) activity.findViewById(R.id.search_box);
+        	activity.adapter.getFilter().filter(filterText.getText().toString());
         	pdia.dismiss();
         }
     }

@@ -23,7 +23,7 @@ public class MainActivity extends ListActivity {
         filterText = (EditText) findViewById(R.id.search_box);
         filterText.addTextChangedListener(filterTextWatcher);
         
-        rp = new RoomsProvider(this);
+        rp = new RoomsProvider(this, this.getSharedPreferences("settings", 0));
         
         if (rp.isExpired()) {
         	rp.feedDatabase();
