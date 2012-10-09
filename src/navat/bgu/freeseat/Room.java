@@ -7,4 +7,9 @@ public class Room {
 	int total;
 	String link;
 	int rate;
+	
+	@Override
+	public String toString() {
+		return String.valueOf(occupied) + "/" + String.valueOf(total) + " " + room;
+	}
 }

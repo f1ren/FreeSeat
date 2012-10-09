@@ -5,37 +5,43 @@ import android.app.ListActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class MainActivity extends ListActivity {
+	
 	private EditText filterText = null;
-	ArrayAdapter<String> adapter = null;
+	ArrayAdapter<Room> adapter = null;
 	RoomsProvider rp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        rp = new RoomsProvider(this.getBaseContext());
+        filterText = (EditText) findViewById(R.id.search_box);
+        filterText.addTextChangedListener(filterTextWatcher);
+        
+        rp = new RoomsProvider(this);
         
         if (rp.isExpired()) {
         	rp.feedDatabase();
         }
         
-        filterText = (EditText) findViewById(R.id.search_box);
-        filterText.addTextChangedListener(filterTextWatcher);
-        
-        adapter = new ArrayAdapter<String>(this,
+        adapter = new ArrayAdapter<Room>(this,
                 android.R.layout.simple_list_item_1, 
-                getStringArrayList());
+                rp.roomList);
         setListAdapter(adapter);
+        
+        final Button refreshButton = (Button) findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				rp.feedDatabase();
+			}
+		});
     }
-
-    private String[] getStringArrayList() {
-    	String[] result = new String[] {"one thing", "the second item", "this is a team", "another one"};
-		return result;
-	}
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
