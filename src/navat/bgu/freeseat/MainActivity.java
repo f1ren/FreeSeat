@@ -2,6 +2,7 @@ package navat.bgu.freeseat;
 
 import android.os.Bundle;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -9,9 +10,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
-	
+	public final static String EXTRA_MESSAGE = "navat.bgu.freeseat.link";
 	private EditText filterText = null;
 	ArrayAdapter<Room> adapter = null;
 	RoomsProvider rp;
@@ -69,5 +72,13 @@ public class MainActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         filterText.removeTextChangedListener(filterTextWatcher);
+    }
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+    	//Toast.makeText(this, adapter.getItem(position).link, Toast.LENGTH_SHORT).show();
+    	Intent i = new Intent(this, RoomWebViewActivity.class);
+    	i.putExtra(EXTRA_MESSAGE, adapter.getItem(position).link);
+    	startActivity(i);
     }
 }
