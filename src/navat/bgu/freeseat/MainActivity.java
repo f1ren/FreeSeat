@@ -1,5 +1,8 @@
 package navat.bgu.freeseat;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -7,11 +10,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends ListActivity {
 	public final static String EXTRA_MESSAGE = "navat.bgu.freeseat.link";
@@ -32,10 +39,14 @@ public class MainActivity extends ListActivity {
         	rp.feedDatabase();
         }
         
-        adapter = new ArrayAdapter<Room>(this,
-                android.R.layout.simple_list_item_1, 
-                rp.roomList);
-        setListAdapter(adapter);
+        //adapter = new ArrayAdapter<Room>(this,
+        //        android.R.layout.simple_list_item_1, 
+        //        rp.roomList);
+        
+        SimpleAdapter adapter2 = new RoomAdapter(this, RoomAdapter.roomsToHashMapList(rp.roomList), R.layout.room_row,
+                new String[] {"room", "availability"}, new int[] {R.id.roomName, R.id.availability});
+        
+        setListAdapter(adapter2);
         
         final Button refreshButton = (Button) findViewById(R.id.refresh);
         refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +76,6 @@ public class MainActivity extends ListActivity {
                 int count) {
         	adapter.getFilter().filter(s);
         }
-
     };
     
     @Override
