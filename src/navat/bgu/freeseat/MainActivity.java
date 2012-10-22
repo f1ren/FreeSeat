@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,8 +44,9 @@ public class MainActivity extends ListActivity {
         //        android.R.layout.simple_list_item_1, 
         //        rp.roomList);
         
-        SimpleAdapter adapter2 = new RoomAdapter(this, RoomAdapter.roomsToHashMapList(rp.roomList), R.layout.room_row,
-                new String[] {"room", "availability"}, new int[] {R.id.roomName, R.id.availability});
+        //SimpleAdapter adapter2 = new RoomAdapter(this, RoomAdapter.roomsToHashMapList(rp.roomList), R.layout.room_row,
+        //        new String[] {"room", "availability"}, new int[] {R.id.roomName, R.id.availability});
+        BaseAdapter adapter2 = new RoomAdapter(this, R.id.roomName, rp.roomList);
         
         setListAdapter(adapter2);
         
