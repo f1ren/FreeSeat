@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">FreeSeat</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="filter_hint">type to filter</string>
+    <string name="refresh" />
+    <string name="title_activity_room_web_view">RoomWebView</string>
+
+</resources>
