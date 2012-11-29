@@ -19,6 +19,7 @@ from google.appengine.ext.webapp import template
 import webapp2
 from google.appengine.ext import db
 import logging
+from logging import debug
 import random
 import string
 from data import *
@@ -53,10 +54,16 @@ class MainHandler(webapp2.RequestHandler):
 def listFormat(listString):
     return "'" + listString.replace(",", "','") + "'"
 
-def roomsQuery(roomsList):
+def whereStatementIfNeeded(roomsList):
+    if roomsList is None:
+        return ""
+    else:
+        return "WHERE name IN (" + listFormat(roomsList) + ") "
+
+def roomsQuery(roomsList = None):
     rooms = db.GqlQuery("SELECT * "
-                        "FROM Room "
-                        "WHERE name IN (" + listFormat(roomsList) + ") "
+                        "FROM Room " + \
+                        whereStatementIfNeeded(roomsList) + \
                         "ORDER BY free DESC")
     return rooms
 
@@ -73,7 +80,6 @@ class RoomsHandler(webapp2.RequestHandler):
         }
 
         path = os.path.join(os.path.dirname(__file__), 'rooms.html')
-        logging.debug('rendering %s' % path)
         self.response.out.write(template.render(path, template_values))
 
 def int2(strToInt):
@@ -95,19 +101,60 @@ class SelectSectionHandler(webapp2.RequestHandler):
         self.redirect("/")
 
 class UpdateRoomsHandler(webapp2.RequestHandler):
+    def getRoomsFromGezer(self):
+        rp = RoomsParser()
+        rp.feed(urllib2.urlopen(ROOMS_URL).read())
+        rooms = rp.getRooms()
+
+        return rooms
+
+    def compareDbAndGezerRoom(self, dbRoom, gezerRoom):
+        return (dbRoom.link == gezerRoom[-1] and 
+               (dbRoom.occupied, dbRoom.total) ==
+                parseOccupancy(gezerRoom[-2]))
+        
+    def get(self):
+        import re
+
+        dbRooms = roomsQuery()
+        gezerRooms = self.getRoomsFromGezer()
+
+        for dbRoom in dbRooms:
+            roomName = dbRoom.longName
+            if not gezerRooms.has_key(roomName):
+                logging.warning("Room not found! %s" % roomName)
+                logging.warning("Rooms list %s" % str(gezerRooms.keys()))
+                continue
+            if not self.compareDbAndGezerRoom(dbRoom,
+                gezerRooms[roomName]):
+                room = gezerRooms[roomName]
+                debug("Change found in %s" % roomName)
+
+                #dbRoom = Room.get_or_insert(room[1])
+                dbRoom.link = room[-1]
+                (dbRoom.occupied, dbRoom.total) = parseOccupancy(room[-2])
+                dbRoom.free = dbRoom.total - dbRoom.occupied
+                dbRoom.put()
+            else:
+                pass
+                #debug("No change in %s" % roomName)
+
+class NewRoomsHandler(webapp2.RequestHandler):
     def get(self):
         import re
         rp = RoomsParser()
         rp.feed(urllib2.urlopen(ROOMS_URL).read())
-        #rp.feed(open("compclass.htm", "rb").read())
         rooms = rp.getRooms()
-        self.response.out.write(len(rooms))
-        for room in rooms:
+        #self.response.out.write(len(rooms))
+        for room_key in rooms:
+            room = rooms[room_key]
+            debug("room %s" % room[1])
             dbRoom = Room.get_or_insert(room[1])
             dbRoom.link = room[-1]
             (dbRoom.occupied, dbRoom.total) = parseOccupancy(room[-2])
             dbRoom.free = dbRoom.total - dbRoom.occupied
             long_name_nums = re.findall("\d+", room[1])
+            dbRoom.longName = unicode(room[1])
             #if dbRoom.name == "" or dbRoom.name is None:
             #    dbRoom.name = long_name_nums[-1]
             #if (dbRoom.building == "" or dbRoom.building is None) and len(long_name_nums) == 2:
@@ -116,6 +163,7 @@ class UpdateRoomsHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                                ('/updateRooms', UpdateRoomsHandler),
+                               ('/getNewRooms', NewRoomsHandler),
                                ('/selectSection', SelectSectionHandler),
                                ('/rooms', RoomsHandler)],
                               debug=True)

@@ -59,7 +59,7 @@ class RoomsParser(object):
                 result += self._iterateTable(table)
         return result
     def getRooms(self):
-        result = []
+        result = {}
         for tr in self.soup.table.find_all("tr")[1:]:
             if len(tr) == 5 and tr.string is None:
                 room = []
@@ -75,7 +75,8 @@ class RoomsParser(object):
                         if len(room) == 0 or text.replace(" ", "") != room[-1].replace(" ", ""):
                             room.append(text)
                     td = td.next
-                result.append(room[:5])
+                # Use room caption as key
+                result[room[1]] = room[:5]
         return result
 
 if __name__ == "__main__":
@@ -99,7 +100,7 @@ if __name__ == "__main__":
     #print r
     print "LEN = %d" % len(r)
     for i in r:
-        print i[-1]
+        print i
         #of.write(i.__repr__())
         #for f in i:
         #    print f

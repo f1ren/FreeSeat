@@ -1,5 +1,5 @@
 cron:
 - description: Update rooms status
   url: /updateRooms
-  schedule: every 3 minutes
+  schedule: every 2 minutes
   timezone: Israel
