@@ -71,16 +71,21 @@ class RoomsHandler(webapp2.RequestHandler):
     def get(self):
         roomsNames = self.request.get("rooms")
         setCookieValue(self, ROOMS_LIST_PROP_NAME, roomsNames)
-        rooms = roomsQuery(roomsNames)
-        defaultRooms = roomsQuery(DEFAULT_ROOMS_LIST)
-        # Add the rooms that everyone can use:
-        template_values = {
-            'rooms': rooms,
-            'defaultRooms': defaultRooms,
-        }
+        try:
+            rooms = roomsQuery(roomsNames)
+            defaultRooms = roomsQuery(DEFAULT_ROOMS_LIST)
+            # Add the rooms that everyone can use:
+            template_values = {
+                'rooms': rooms,
+                'defaultRooms': defaultRooms,
+            }
 
-        path = os.path.join(os.path.dirname(__file__), 'rooms.html')
-        self.response.out.write(template.render(path, template_values))
+            path = os.path.join(os.path.dirname(__file__), 'rooms.html')
+            self.response.out.write(template.render(path, template_values))
+        except:
+            template_values = {}
+            path = os.path.join(os.path.dirname(__file__), 'overload.html')
+            self.response.out.write(template.render(path, template_values))
 
 def int2(strToInt):
     if strToInt == "":
