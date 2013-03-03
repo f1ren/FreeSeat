@@ -62,10 +62,22 @@
           <tbody>
 
 			{% for room in rooms %}
-			<tr><td><a href="{{ room.link }}">הצג</a></td><td><font color={{ room.color }}>{{ room.occupied }}/{{ room.total }}</font></td><td>{{ room.building }}</td><td>{{ room.name }}</td></tr>
+            <tr><td><a href="{{ room.link }}">הצג</a></td><td><font color={{ room.color }}>
+                        {% if room.total == 0 %}
+                        -
+                        {% else %}
+                        {{ room.occupied }}/{{ room.total }}
+                        {% endif %}
+            </font></td><td>{{ room.building }}</td><td>{{ room.name }}</td></tr>
 			{% endfor %}
 			{% for room in defaultRooms %}
-			<tr><td><a href="{{ room.link }}">הצג</a></td><td><font color={{ room.color }}>{{ room.occupied }}/{{ room.total }}</font></td><td>{{ room.building }}</td><td>{{ room.name }}</td></tr>
+            <tr><td><a href="{{ room.link }}">הצג</a></td><td><font color={{ room.color }}>
+                        {% if room.total == 0 %}
+                        -
+                        {% else %}
+                        {{ room.occupied }}/{{ room.total }}
+                        {% endif %}
+            </font></td><td>{{ room.building }}</td><td>{{ room.name }}</td></tr>
 			{% endfor %}
           </tbody>
 
