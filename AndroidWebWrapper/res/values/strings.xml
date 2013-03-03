@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="shortcut">FreeSeats</string>
+    <string name="widget_textview">widget_textview</string>
+    <string name="widget_name">כסאות פנויים</string>
+    <string name="app_name">כסאות פנויים</string>
+    <string name="title_activity_main">כסאות פנויים</string>
+    <string name="load_message">טוען</string>
+
+</resources>
