@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.freeseatswebwrapper;
+package bgapps.freeseatswebwrapper;
 
 public final class R {
     public static final class attr {
@@ -27,9 +27,10 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050003;
-        public static final int load_message=0x7f050005;
+        public static final int load_message=0x7f050006;
         public static final int shortcut=0x7f050000;
-        public static final int title_activity_main=0x7f050004;
+        public static final int shortcut_text=0x7f050004;
+        public static final int title_activity_main=0x7f050005;
         public static final int widget_name=0x7f050002;
         public static final int widget_textview=0x7f050001;
     }

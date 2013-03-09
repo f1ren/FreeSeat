@@ -1,4 +1,6 @@
-package com.example.freeseatswebwrapper;
+package bgapps.freeseatswebwrapper;
+
+import bgapps.freeseatswebwrapper.R;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -8,7 +10,6 @@ import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -33,24 +34,20 @@ public class MainActivity extends Activity {
         });
         myWebView.loadUrl("http://freeseatbgu.appspot.com");
         
-        Intent shortcutIntent = new Intent(this, MainActivity.class);
-        /*shortcutIntent.setClassName("com.example.freeseatswebwrapper", "ShortcutIntent");
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        shortcutIntent.putExtra("someParameter", "HelloWorld");*/
-        
         Context mContext = this.getApplicationContext();
         mPrefs = mContext.getSharedPreferences("myAppPrefs", 0);
 
         if (mPrefs.getBoolean("firstRun", true)) {
+        	Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+        	shortcutIntent.setClassName(this, this.getClass().getName());
+
 	        Context context = this.getBaseContext();
-	        Intent addIntent = new Intent();
+	        Intent addIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
 	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.shortcut_text));
 	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.drawable.ic_launcher));
-	
-	        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-	        context.sendBroadcast(addIntent);
+
+	        sendBroadcast(addIntent);
         }
         SharedPreferences.Editor edit = mPrefs.edit();
         edit.putBoolean("firstRun", false);

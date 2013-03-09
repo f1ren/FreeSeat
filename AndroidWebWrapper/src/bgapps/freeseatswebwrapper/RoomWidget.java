@@ -1,10 +1,11 @@
-package com.example.freeseatswebwrapper;
+package bgapps.freeseatswebwrapper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import com.example.freeseatswebwrapper.R;
+
+import bgapps.freeseatswebwrapper.R;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
