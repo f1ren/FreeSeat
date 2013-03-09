@@ -2,6 +2,7 @@ package bgapps.freeseatswebwrapper;
 
 import bgapps.freeseatswebwrapper.R;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -31,6 +32,17 @@ public class MainActivity extends Activity {
         		findViewById(R.id.textView1).setVisibility(View.GONE);
         		findViewById(R.id.webview).setVisibility(View.VISIBLE);
            }
+        	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.startsWith("mailto:") || url.startsWith("tel:")) { 
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(url)); 
+                        startActivity(intent); 
+                        }
+                else {
+                    view.loadUrl(url);
+                }
+                return true;
+                }
         });
         myWebView.loadUrl("http://freeseatbgu.appspot.com");
         
