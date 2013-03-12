@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
                 return true;
                 }
         });
-        myWebView.loadUrl("http://freeseatbgu.appspot.com");
+        myWebView.loadUrl("http://freeseatbgu.appspot.com/?src=androidWrapper");
         
         Context mContext = this.getApplicationContext();
         mPrefs = mContext.getSharedPreferences("myAppPrefs", 0);
@@ -56,8 +56,10 @@ public class MainActivity extends Activity {
 	        Context context = this.getBaseContext();
 	        Intent addIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
 	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+	        addIntent.putExtra("duplicate", false);
 	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.shortcut_text));
 	        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.drawable.ic_launcher));
+	        //addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext() , MainActivity.class));
 
 	        sendBroadcast(addIntent);
         }

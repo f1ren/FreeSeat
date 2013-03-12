@@ -41,7 +41,12 @@ def setCookieValue(rquestHandler, name, val):
             )
 
 class MainHandler(webapp2.RequestHandler):
-    def get(self):
+    def shouldAskForAppDownload(self):
+        src = self.request.get("src")
+        return "Android" in self.request.headers["User-Agent"] and \
+                src != "androidWrapper"
+    
+    def showRelevantPage(self):
         roomsList = self.request.cookies.get(ROOMS_LIST_PROP_NAME)
         if not roomsList is None and roomsList != "":
             roomsList = roomsList.replace("|", ",")
@@ -50,6 +55,14 @@ class MainHandler(webapp2.RequestHandler):
             template_values = {}
             path = os.path.join(os.path.dirname(__file__), 'sections.html')
             self.response.out.write(template.render(path, template_values))
+
+    def get(self):
+        if self.shouldAskForAppDownload():
+            template_values = {}
+            path = os.path.join(os.path.dirname(__file__), 'GooglePlay.html')
+            self.response.out.write(template.render(path, template_values))
+        else:
+            self.showRelevantPage()
 
 def listFormat(listString):
     return "'" + listString.replace(",", "','") + "'"
